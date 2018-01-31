@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  medium_username: MyString
+  github: MyString
+  email: MyString
+  password_digest: MyString
+  cohort: one
+  image_slug: MyString
+
+two:
+  name: MyString
+  medium_username: MyString
+  github: MyString
+  email: MyString
+  password_digest: MyString
+  cohort: two
+  image_slug: MyString
