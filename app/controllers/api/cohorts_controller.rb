@@ -4,6 +4,11 @@ class Api::CohortsController < ApplicationController
     render json: @cohorts
   end
 
+  def show
+    @cohort = Cohort.find(params[:id])
+    render json: @cohort
+  end
+
   def update
     @cohort = Cohort.find(params[:id])
 
