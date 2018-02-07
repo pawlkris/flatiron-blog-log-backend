@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 20180131235837) do
   create_table "posts", force: :cascade do |t|
     t.string "title"
     t.string "slug"
-    t.datetime "date"
+    t.bigint "date"
     t.integer "claps"
     t.integer "reading_time"
     t.integer "author_id"

@@ -18,8 +18,11 @@ gem 'puma', '~> 3.7'
 # gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
-
 gem 'jwt'
+gem 'figaro'
+
+gem 'fast_jsonapi'
+
 
 gem 'rest-client'
 
