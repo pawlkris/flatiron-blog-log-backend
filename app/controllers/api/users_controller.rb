@@ -8,6 +8,7 @@ class Api::UsersController < ApplicationController
   def create
     @user = User.create(user_params)
     payload = fetch_user(params[:medium_username])
+    byebug
     @user.update(name:payload["user"]["name"], image_slug:payload["user"]["imageId"])
     author_id = @user.id
     cohort_start = Cohort.find(@user.cohort_id).start_date.to_time.to_i*1000
@@ -32,13 +33,18 @@ class Api::UsersController < ApplicationController
   end
 
   def show
-  @user = User.find(params[:id])
-  render json: @user, status: 200
+    @user = User.find(params[:id])
+    render json: @user, status: 200
   end
 
   def update
-    byebug
-
+    @user = User.find(params[:id])
+    @user.update(cohort_id:params[:cohort_id], email:params[:email], github:params[:github])
+    if params[:password] != ""
+      @user.password = params[:password]
+      @user.save
+    end
+    render json: @user, status: 202
   end
 
 
