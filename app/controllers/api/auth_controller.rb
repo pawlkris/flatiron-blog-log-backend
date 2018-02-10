@@ -7,8 +7,10 @@ class Api::AuthController < ApplicationController
       username: user.medium_username,
       jwt: JWT.encode({user_id: user.id}, ENV["pusher_secret"], 'HS256')
     }
+  elsif user
+    render json: {error: 'Password incorrect. Please try again.'}, status: 404
   else
-    render json: {error: 'User not found'}, status: 404
+    render json: {error: 'User not found. Please revise Medium Username.'}, status: 404
   end
 end
 
