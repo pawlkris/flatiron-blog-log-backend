@@ -6,7 +6,6 @@ class Api::UsersController < ApplicationController
   end
 
   def create
-    byebug
     @user = User.new(user_params)
     if @user.valid?
       payload = fetch_user(params[:medium_username])
@@ -32,7 +31,9 @@ class Api::UsersController < ApplicationController
       end
       render json: @user, status: 201
     else
-      render json: @user.errors, status: 409
+      errors = @user.errors
+      errors.add(:errors, true)
+      render json: errors, status: 409
     end
 
   end
