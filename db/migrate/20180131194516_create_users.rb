@@ -8,6 +8,7 @@ class CreateUsers < ActiveRecord::Migration[5.1]
       t.string :password_digest
       t.belongs_to :cohort, foreign_key: true
       t.string :image_slug
+      t.index :medium_username, unique: true
 
       t.timestamps
     end

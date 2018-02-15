@@ -67,6 +67,7 @@ ActiveRecord::Schema.define(version: 20180131235837) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["cohort_id"], name: "index_users_on_cohort_id"
+    t.index ["medium_username"], name: "index_users_on_medium_username", unique: true
   end
 
   add_foreign_key "post_tags", "posts"

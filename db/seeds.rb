@@ -40,8 +40,19 @@ web103017 = ["pawlkris", "sethbarden", "dansbands", "jonwu_", "joshstillman", "e
 
 web112017 = ["ddbren", "humzah.choudry", "kellydsample", "clergemarvin", "mattcfaircloth", "matt.mcalister93", "alisonmackay246", "yamunanavada"]
 
+web121117 = ["olegchursin", "mautayro", "krandles", "drewovercash", "a.kallenbornbolden", "brianaclairbaker", "jtregoat"]
+
+web0108 = ["alexey.katalkin", "feihafferkamp", "joshdeiner75", "morgannegagne", "tania.e.aparicio", "cristy.lucke", "torre.johnson"]
+
+web0129 = ["aralx73", "diep.christopher", "ichabon", "jairoespinosa95", "melnock", "ryanmarinerfarney"]
+
+co1009 = Cohort.create(name:"10092017", start_date:DateTime.new(2017,10,9))
 co1030 = Cohort.create(name:"10302017", start_date:DateTime.new(2017,10,30))
 co1120 = Cohort.create(name:"11202017", start_date:DateTime.new(2017,11,20))
+co1211 = Cohort.create(name:"12112017", start_date:DateTime.new(2017,12,11))
+co0108 = Cohort.create(name:"01082018", start_date:DateTime.new(2018,1,8))
+co0129 = Cohort.create(name:"01292018", start_date:DateTime.new(2018,1,8))
+
 
 
 def fetch_user(username)
@@ -67,30 +78,38 @@ def read_accounts(mod, userArray)
 
 
     author_id = @user.id
+    if payload["references"]["Post"]
     postIds = payload["references"]["Post"].keys
+      postIds.each do |post|
+        postHash = payload["references"]["Post"][post]
+        #check if post was published after cohort start date
+        if (postHash["firstPublishedAt"] > cohort_start)
+          #find or create Posts
+          @post = Post.find_or_create_by(slug:postHash["uniqueSlug"], author_id:author_id)
+          @post.update(title:postHash["title"], date:postHash["firstPublishedAt"], claps:postHash["virtuals"]["totalClapCount"], reading_time: postHash["virtuals"]["readingTime"].round)
 
-    postIds.each do |post|
-      postHash = payload["references"]["Post"][post]
-      #check if post was published after cohort start date
-      if (postHash["firstPublishedAt"] > cohort_start)
-        #find or create Posts
-        @post = Post.find_or_create_by(slug:postHash["uniqueSlug"], author_id:author_id)
-        @post.update(title:postHash["title"], date:postHash["firstPublishedAt"], claps:postHash["virtuals"]["totalClapCount"], reading_time: postHash["virtuals"]["readingTime"].round)
-
-        #create PostTags
-        tagArray = postHash["virtuals"]["tags"]
-        tagArray.each do |tag|
-          tag_id = Tag.find_or_create_by(name:tag["name"], slug:tag["slug"]).id
-          post_tag = PostTag.find_or_create_by(tag_id:tag_id, post_id:@post.id)
+          #create PostTags
+          tagArray = postHash["virtuals"]["tags"]
+          tagArray.each do |tag|
+            tag_id = Tag.find_or_create_by(name:tag["name"], slug:tag["slug"]).id
+            post_tag = PostTag.find_or_create_by(tag_id:tag_id, post_id:@post.id)
+          end
         end
       end
     end
   end
 end
 
-read_accounts(1, web103017)
+read_accounts(co1030.id, web103017)
 
-read_accounts(2, web112017)
+read_accounts(co1120.id, web112017)
+
+read_accounts(co1211.id, web121117)
+
+read_accounts(co0108.id, web0108)
+
+read_accounts(co0129.id, web0129)
+
 
 
 

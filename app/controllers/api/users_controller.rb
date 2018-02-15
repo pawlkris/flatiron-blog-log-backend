@@ -12,20 +12,22 @@ class Api::UsersController < ApplicationController
       @user.update(name:payload["user"]["name"], image_slug:payload["user"]["imageId"])
       author_id = @user.id
       cohort_start = Cohort.find(@user.cohort_id).start_date.to_time.to_i*1000
+      if payload["references"]["Post"]
       postIds = payload["references"]["Post"].keys
-      postIds.each do |post|
-        postHash = payload["references"]["Post"][post]
-        #check if post was published after cohort start date
-        if (postHash["firstPublishedAt"] > cohort_start)
-          #find or create Posts
-          @post = Post.find_or_create_by(slug:postHash["uniqueSlug"], author_id:author_id)
-          @post.update(title:postHash["title"], date:postHash["firstPublishedAt"], claps:postHash["virtuals"]["totalClapCount"], reading_time: postHash["virtuals"]["readingTime"].round)
+        postIds.each do |post|
+          postHash = payload["references"]["Post"][post]
+          #check if post was published after cohort start date
+          if (postHash["firstPublishedAt"] > cohort_start)
+            #find or create Posts
+            @post = Post.find_or_create_by(slug:postHash["uniqueSlug"], author_id:author_id)
+            @post.update(title:postHash["title"], date:postHash["firstPublishedAt"], claps:postHash["virtuals"]["totalClapCount"], reading_time: postHash["virtuals"]["readingTime"].round)
 
-          #create PostTags
-          tagArray = postHash["virtuals"]["tags"]
-          tagArray.each do |tag|
-            tag_id = Tag.find_or_create_by(name:tag["name"], slug:tag["slug"]).id
-            post_tag = PostTag.find_or_create_by(tag_id:tag_id, post_id:@post.id)
+            #create PostTags
+            tagArray = postHash["virtuals"]["tags"]
+            tagArray.each do |tag|
+              tag_id = Tag.find_or_create_by(name:tag["name"], slug:tag["slug"]).id
+              post_tag = PostTag.find_or_create_by(tag_id:tag_id, post_id:@post.id)
+            end
           end
         end
       end
