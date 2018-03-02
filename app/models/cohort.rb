@@ -4,11 +4,15 @@ class Cohort < ApplicationRecord
   def self.fetch_user(username)
     url = "https://medium.com/@#{username}/latest"
     headers = {Accept:'application/json'}
-    response = RestClient.get(url, headers)
-    body = response.body
-    body = body.sub("])}while(1);</x>","")
-    json = JSON.parse(body)
-    payload = json["payload"]
+    begin
+      response = RestClient.get(url, headers)
+      body = response.body
+      body = body.sub("])}while(1);</x>","")
+      json = JSON.parse(body)
+      payload = json["payload"]
+    rescue RestClient::NotFound => err
+      return err
+    end
   end
 
 
@@ -16,6 +20,9 @@ class Cohort < ApplicationRecord
     self.all.each do |cohort|
       cohort.users.each do |user|
         payload = self.fetch_user(user.medium_username)
+        if payload.class == RestClient::NotFound
+          return user.delete
+        end
         author_id = user.id
         cohort_start = self.find(user.cohort_id).start_date.to_time.to_i*1000
         if payload["references"]["Post"]
