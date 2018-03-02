@@ -21,7 +21,8 @@ class Cohort < ApplicationRecord
       cohort.users.each do |user|
         payload = self.fetch_user(user.medium_username)
         if payload.class == RestClient::NotFound
-          return user.delete
+          user.delete
+          next
         end
         author_id = user.id
         cohort_start = self.find(user.cohort_id).start_date.to_time.to_i*1000
